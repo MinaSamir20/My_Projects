@@ -30,16 +30,16 @@ Widget defaultButton({
 
 Widget defaultFormField({
   required TextEditingController controller,
-  required TextInputType type,
   required String label,
   required IconData prefix,
-  required String Function(String?)? validate,
+  required TextInputType type,
+  String? Function(String?)? validate,
   Function(String?)? onSubmit,
   Function(String?)? onChange,
   Function()? onTap,
-  bool isPassword = false,
-  IconData? suffix,
   Function()? suffixPressed,
+  IconData? suffix,
+  bool isPassword = false,
   bool isClickable = true,
 }) =>
     TextFormField(
