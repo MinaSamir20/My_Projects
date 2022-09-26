@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:udemy_flutter/modules/archived_tasks/archived_tasks_screen.dart';
 import 'package:udemy_flutter/modules/done_tasks/done_tasks_screen.dart';
 import 'package:udemy_flutter/modules/new_tasks/new_tasks.dart';
@@ -27,6 +28,7 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   var db;
   var scafoldKey = GlobalKey<ScaffoldState>();
+  var formKey = GlobalKey<FormState>();
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
   var titleController = TextEditingController();
@@ -51,56 +53,89 @@ class _HomeLayoutState extends State<HomeLayout> {
         child: Icon(fabIcon),
         onPressed: () {
           if (isBottomSheetShown) {
-            Navigator.pop(context);
-            isBottomSheetShown = false;
-            setState(() {
-              fabIcon = Icons.edit;
-            });
+            if(formKey.currentState!.validate()){
+              Navigator.pop(context);
+              isBottomSheetShown = false;
+              setState(() {
+                fabIcon = Icons.edit;
+              });
+            }
           } else {
             scafoldKey.currentState?.showBottomSheet((context) => Container(
                   color: Colors.grey[100],
                   padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Task TextField
-                      defaultFormField(
-                        controller: titleController,
-                        type: TextInputType.text,
-                        label: 'Task Title',
-                        prefix: Icons.title,
-                        validate: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'title must not be empty';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 15),
-                      //Time
-                      defaultFormField(
-                        controller: timeController,
-                        type: TextInputType.datetime,
-                        label: 'Task Time',
-                        prefix: Icons.watch_later_rounded,
-                        onTap: () {
-                          showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          ).then((value) {
-                            print(value.toString());
-                          }).catchError((e) {
-                            print('Error is ${e.toString()}');
-                          });
-                        },
-                        validate: (String? value) {
-                          if (value!.isEmpty) {
-                            return 'time must not be empty';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Task TextField
+                        defaultFormField(
+                          controller: titleController,
+                          type: TextInputType.text,
+                          label: 'Task Title',
+                          prefix: Icons.title,
+                          validate: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'title must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                        //Time Picker
+                        defaultFormField(
+                          controller: timeController,
+                          type: TextInputType.datetime,
+                          label: 'Task Time',
+                          prefix: Icons.watch_later_rounded,
+                          onTap: () {
+                            showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            ).then((value) {
+                              timeController.text = value!.format(context);
+                              print(value.format(context));
+                            }).catchError((e) {
+                              print('Error is ${e.toString()}');
+                            });
+                          },
+                          validate: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'time must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                        //Date Picker
+                        defaultFormField(
+                          controller: dateController,
+                          type: TextInputType.datetime,
+                          label: 'Task Date',
+                          prefix: Icons.calendar_month_outlined,
+                          onTap: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: ,
+                            ).then((value) {
+                              dateController.text = DateFormat.yMMMd().format(value!);
+                              print(DateFormat.yMMMd().format(value));
+                            }).catchError((e) {
+                              print('Error is ${e.toString()}');
+                            });
+                          },
+                          validate: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'Date must not be empty';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ));
             isBottomSheetShown = true;
