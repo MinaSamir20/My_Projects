@@ -20,10 +20,15 @@ class HomeLayout extends StatelessWidget {
     var dateController = TextEditingController();
 
     return BlocProvider(
-      create: (context) => TodoAppCubit(),
+      create: (context) => TodoAppCubit()..createDataBase(),
       child: BlocConsumer<TodoAppCubit, TodoAppStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(state is InsertDatabaseState){
+            Navigator.pop(context);
+          }
+        },
         builder: (context, state) {
+          //Create Cubit Variable to easily access
           TodoAppCubit cubit = TodoAppCubit.get(context);
 
           return Scaffold(
@@ -31,35 +36,19 @@ class HomeLayout extends StatelessWidget {
             appBar: AppBar(
               title: Text(cubit.titles[cubit.currentIndex]),
             ),
-            body: cubit.tasks.isEmpty
+            body: /*cubit.tasks.isEmpty
                 ? const Center(child: CircularProgressIndicator())
-                : cubit.screens[cubit.currentIndex],
+                :*/ cubit.screens[cubit.currentIndex],
             floatingActionButton: FloatingActionButton(
               child: Icon(cubit.fabIcon),
               onPressed: () {
                 if (cubit.isBottomSheetShown) {
                   if (formKey.currentState!.validate()) {
-                    cubit.insertToDataBase(
+                    cubit.insertToDatabase(
                       title: titleController.text,
                       time: timeController.text,
                       date: dateController.text,
                     );
-                    // insertToDataBase(
-                    //         title: titleController.text,
-                    //         time: timeController.text,
-                    //         date: dateController.text)
-                    //     .then((value) {
-                    //   getDataFromDataBase(database).then((value) {
-                    //     Navigator.pop(context);
-                    //     setState(() {
-                    //       cubit.isBottomSheetShown = false;
-                    //       fabIcon = Icons.edit;
-                    //
-                    //       tasks = value;
-                    //       print(tasks);
-                    //     });
-                    //   });
-                    // });
                   }
                 } else {
                   scaffoldKey.currentState
@@ -178,10 +167,6 @@ class HomeLayout extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<String> getName() async {
-    return 'Mina Samir';
   }
 
   void updateDB() {
