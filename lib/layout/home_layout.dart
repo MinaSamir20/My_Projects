@@ -23,7 +23,7 @@ class HomeLayout extends StatelessWidget {
       create: (context) => TodoAppCubit()..createDataBase(),
       child: BlocConsumer<TodoAppCubit, TodoAppStates>(
         listener: (context, state) {
-          if(state is InsertDatabaseState){
+          if (state is InsertDatabaseState) {
             Navigator.pop(context);
           }
         },
@@ -36,9 +36,7 @@ class HomeLayout extends StatelessWidget {
             appBar: AppBar(
               title: Text(cubit.titles[cubit.currentIndex]),
             ),
-            body: /*cubit.tasks.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                :*/ cubit.screens[cubit.currentIndex],
+            body: cubit.screens[cubit.currentIndex],
             floatingActionButton: FloatingActionButton(
               child: Icon(cubit.fabIcon),
               onPressed: () {

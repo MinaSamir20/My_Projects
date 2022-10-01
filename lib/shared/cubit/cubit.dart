@@ -35,9 +35,6 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
   //DataBase
   var database;
   List<Map> tasks = [];
-  List<Map> newTasks = [];
-  List<Map> doneTasks = [];
-  List<Map> archivedTasks = [];
 
   //Create DataBase
   void createDataBase() {
@@ -56,11 +53,16 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
         });
       },
       onOpen: (database) {
-        getDataFromDataBase(database);
+        getDataFromDatabase(database).then((value) {
+          tasks = value;
+          print(tasks);
+          emit(GetDatabaseState());
+        });
         print('Database Opened');
       },
     ).then((value) {
       database = value;
+      print(database);
       emit(CreateDatabaseState());
     });
   }
@@ -72,15 +74,18 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
     required String date,
   }) async {
     await database.transaction((txn) {
-      txn
-          .rawInsert(
+      txn.rawInsert(
         'INSERT INTO tasks(title, date, time, status) VALUES("$title", "$date", "$time", "new")',
-      )
-          .then((value) {
+      ).then((value)
+      {
         print('$value inserted successfully');
         emit(InsertDatabaseState());
 
-        getDataFromDataBase(database);
+        getDataFromDatabase(database).then((value) {
+          tasks = value;
+          print(tasks);
+          emit(GetDatabaseState());
+        });
       }).catchError((error) {
         print('Error When Inserting New Record ${error.toString()}');
       });
@@ -89,11 +94,11 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
   }
 
   //Get Data From DataBase
-  Future<List<Map>> getDataFromDataBase(database) async {
+  Future<List<Map>> getDataFromDatabase(database) async {
+    emit(GetDatabaseLoadingState());
     return await database.rawQuery('SELECT * FROM tasks');
   }
 
-  //=========================\\
   //=======BottomSheet=======\\
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
