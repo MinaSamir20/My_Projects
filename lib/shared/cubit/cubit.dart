@@ -18,7 +18,7 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
 
   List<Widget> screens = [
     const NewTasksScreen(),
-    const DoneTasksSrceen(),
+    const DoneTasksScreen(),
     const ArchivedTasksScreen(),
   ];
   List<String> titles = [
@@ -87,6 +87,10 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
 
   //Get Data From DataBase
   void getDataFromDatabase(database) async {
+    newTasks = [];
+    doneTasks = [];
+    archivedTasks = [];
+
     emit(GetDatabaseLoadingState());
     database.rawQuery('SELECT * FROM tasks').then((value) {
       value.forEach(
@@ -111,7 +115,19 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
   }) async {
     database?.rawUpdate('UPDATE tasks SET status = ? WHERE id = ?',
         [status, '$id']).then((value) {
+      getDataFromDatabase(database);
       emit(UpdateDatabaseState());
+    });
+  }
+
+  //Delete Data In DataBase
+  void deleteData({
+    required int id,
+  }) async {
+    database?.rawDelete('DELETE FROM tasks WHERE id = ?',
+        ['$id']).then((value) {
+      getDataFromDatabase(database);
+      emit(DeleteDatabaseState());
     });
   }
 

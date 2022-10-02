@@ -133,6 +133,10 @@ class HomeLayout extends StatelessWidget {
                       )
                       .closed
                       .then((value) {
+                        titleController.text = '';
+                        timeController.text = '';
+                        dateController.text = '';
+
                     cubit.changeBottomSheetState(
                         isShow: false, icon: Icons.edit);
                   });
@@ -165,13 +169,5 @@ class HomeLayout extends StatelessWidget {
         },
       ),
     );
-  }
-
-  void updateDB() {
-    //
-  }
-
-  void deleteDB() {
-    //
   }
 }
