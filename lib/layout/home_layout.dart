@@ -133,6 +133,7 @@ class HomeLayout extends StatelessWidget {
                       )
                       .closed
                       .then((value) {
+                        // to empty all Text When BottomSheet will be closed
                         titleController.text = '';
                         timeController.text = '';
                         dateController.text = '';
