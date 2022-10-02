@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:udemy_flutter/shared/cubit/cubit.dart';
 
 Widget defaultButton({
   double width = double.infinity,
@@ -58,45 +59,62 @@ Widget defaultFormField({
         ),
         suffixIcon: suffix != null
             ? IconButton(
-          onPressed: suffixPressed,
-          icon: Icon(
-            suffix,
-          ),
-        )
+                onPressed: suffixPressed,
+                icon: Icon(
+                  suffix,
+                ),
+              )
             : null,
         border: OutlineInputBorder(),
       ),
     );
 
-Widget buildTasksItem(Map model) => Padding(
-  padding: const EdgeInsets.all(20),
-  child: Row(
-    children: [
-      CircleAvatar(
-        radius: 40.0,
-        child: Text('${model['time']}'),
-      ),
-      SizedBox(width: 20.0),
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+Widget buildTasksItem(Map model, context) => Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
         children: [
-          Text(
-            '${model['title']}',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+          CircleAvatar(
+            radius: 40.0,
+            child: Text('${model['time']}'),
+          ),
+          SizedBox(width: 20.0),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${model['title']}',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${model['date']}',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            '${model['date']}',
-            style: TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
+          SizedBox(width: 20.0),
+          IconButton(
+            onPressed: () {
+              TodoAppCubit.get(context).updateData(status: 'done', id: model['id']);
+            },
+            icon: Icon(
+              Icons.check_box,
+              color: Colors.green,
             ),
           ),
+          IconButton(
+              onPressed: () {
+                TodoAppCubit.get(context).updateData(status: 'archive', id: model['id']);
+              },
+              icon: Icon(Icons.archive, color: Colors.black45)),
         ],
-      )
-    ],
-  ),
-);
+      ),
+    );

@@ -13,10 +13,10 @@ class NewTasksScreen extends StatelessWidget {
     return BlocConsumer<TodoAppCubit, TodoAppStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        var tasks = TodoAppCubit.get(context).tasks;
+        var tasks = TodoAppCubit.get(context).newTasks;
         return ListView.separated(
             itemBuilder: (context, index) =>
-                buildTasksItem(tasks[index]),
+                buildTasksItem(tasks[index],context),
             separatorBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Container(height: 1.0, color: Colors.grey[300]),

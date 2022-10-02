@@ -33,8 +33,10 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
   }
 
   //DataBase
-  var database;
-  List<Map> tasks = [];
+  Database? database;
+  List<Map> newTasks = [];
+  List<Map> doneTasks = [];
+  List<Map> archivedTasks = [];
 
   //Create DataBase
   void createDataBase() {
@@ -53,11 +55,7 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
         });
       },
       onOpen: (database) {
-        getDataFromDatabase(database).then((value) {
-          tasks = value;
-          print(tasks);
-          emit(GetDatabaseState());
-        });
+        getDataFromDatabase(database);
         print('Database Opened');
       },
     ).then((value) {
@@ -73,30 +71,48 @@ class TodoAppCubit extends Cubit<TodoAppStates> {
     required String time,
     required String date,
   }) async {
-    await database.transaction((txn) {
-      txn.rawInsert(
-        'INSERT INTO tasks(title, date, time, status) VALUES("$title", "$date", "$time", "new")',
-      ).then((value)
-      {
-        print('$value inserted successfully');
-        emit(InsertDatabaseState());
-
-        getDataFromDatabase(database).then((value) {
-          tasks = value;
-          print(tasks);
-          emit(GetDatabaseState());
-        });
-      }).catchError((error) {
-        print('Error When Inserting New Record ${error.toString()}');
-      });
-      return null;
-    });
+    await database?.transaction((txn) => txn
+            .rawInsert(
+          'INSERT INTO tasks(title, date, time, status) VALUES("$title", "$date", "$time", "new")',
+        )
+            .then((value) {
+          print('$value inserted successfully');
+          emit(InsertDatabaseState());
+          getDataFromDatabase(database);
+        }).catchError((error) {
+          print('Error When Inserting New Record ${error.toString()}');
+        }));
+    return null;
   }
 
   //Get Data From DataBase
-  Future<List<Map>> getDataFromDatabase(database) async {
+  void getDataFromDatabase(database) async {
     emit(GetDatabaseLoadingState());
-    return await database.rawQuery('SELECT * FROM tasks');
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      value.forEach(
+        (element) {
+          if (element['status'] == 'new') {
+            newTasks.add(element);
+          } else if (element['status'] == 'done') {
+            doneTasks.add(element);
+          } else {
+            archivedTasks.add(element);
+          }
+        },
+      );
+      emit(GetDatabaseState());
+    });
+  }
+
+  //Update Data In DataBase
+  void updateData({
+    required String status,
+    required int id,
+  }) async {
+    database?.rawUpdate('UPDATE tasks SET status = ? WHERE id = ?',
+        [status, '$id']).then((value) {
+      emit(UpdateDatabaseState());
+    });
   }
 
   //=======BottomSheet=======\\
