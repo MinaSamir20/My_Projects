@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:udemy_flutter/layout/todo_app/cubit/cubit.dart';
+import 'package:udemy_flutter/layout/todo_app/cubit/states.dart';
 import 'package:udemy_flutter/shared/components/components.dart';
-import '../shared/cubit/cubit.dart';
-import '../shared/cubit/states.dart';
 
 class HomeLayout extends StatelessWidget {
   const HomeLayout({super.key});
