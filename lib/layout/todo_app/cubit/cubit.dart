@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:udemy_flutter/shared/cubit/states.dart';
+import 'package:udemy_flutter/layout/todo_app/cubit/states.dart';
 
-import '../../modules/archived_tasks/archived_tasks_screen.dart';
-import '../../modules/done_tasks/done_tasks_screen.dart';
-import '../../modules/new_tasks/new_tasks.dart';
+import '../../../modules/archived_tasks/archived_tasks_screen.dart';
+import '../../../modules/done_tasks/done_tasks_screen.dart';
+import '../../../modules/new_tasks/new_tasks.dart';
 
 class TodoAppCubit extends Cubit<TodoAppStates> {
   TodoAppCubit() : super(TodoInitState());

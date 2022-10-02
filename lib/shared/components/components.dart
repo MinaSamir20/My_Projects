@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:udemy_flutter/shared/cubit/cubit.dart';
 
-import '../cubit/states.dart';
+import '../../layout/todo_app/cubit/cubit.dart';
 
 Widget defaultButton({
   double width = double.infinity,
